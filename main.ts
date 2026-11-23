@@ -1,42 +1,135 @@
+namespace SpriteKind {
+    export const Obstacle = SpriteKind.create()
+}
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
-    if (mySprite.isHittingTile(CollisionDirection.Bottom)) {
-        mySprite.setVelocity(0, -100)
+    animation.stopAnimation(animation.AnimationTypes.All, Cube)
+    if (Cube.ay == 0) {
+        Cube.setImage(img`
+            ........................
+            .5555555555555555555555.
+            .5555555555555555555555.
+            .55ffffffff55ffffffff55.
+            .55f999999f55f999999f55.
+            .55f999999f55f999999f55.
+            .55f999999f55f999999f55.
+            .55f999999f55f999999f55.
+            .55f999999f55f999999f55.
+            .55f999999f55f999999f55.
+            .55ffffffff55ffffffff55.
+            .5555555555555555555555.
+            .5ffffffffffffffffffff5.
+            .5f999999999999999999f5.
+            .5f999999999999999999f5.
+            .5f999999999999999999f5.
+            .5ffffffffffffffffffff5.
+            .5555555555555555555555.
+            .5555555555555555555555.
+            .5555555555555555555555.
+            .5555555555555555555555.
+            .5555555555555555555555.
+            .5555555555555555555555.
+            ........................
+            `)
+        Cube.vy = -160
+        Cube.ay = gravity
     }
 })
-let mySprite: Sprite = null
-scene.setBackgroundImage(assets.image`myImage`)
-tiles.setCurrentTilemap(tilemap`level1`)
-game.showLongText("Make a One Button Game", DialogLayout.Full)
-game.showLongText("You are only allowed the A Button", DialogLayout.Full)
-game.showLongText("Make it fun, make it creative!", DialogLayout.Full)
-scroller.scrollBackgroundWithSpeed(-80, 0)
-let Ready = true
-mySprite = sprites.create(img`
-    ........................
-    ........................
-    ..ffffffffffffffffffff..
-    ..f555555555555555555f..
-    ..f555555555555555555f..
-    ..f555555555555555555f..
-    ..f555fffff55fffff555f..
-    ..f555f999f55f999f555f..
-    ..f555f999f55f999f555f..
-    ..f555f999f55f999f555f..
-    ..f555fffff55fffff555f..
-    ..f555555555555555555f..
-    ..f55ffffffffffffff55f..
-    ..f55f999999999999f55f..
-    ..f55f999999999999f55f..
-    ..f55ffffffffffffff55f..
-    ..f555555555555555555f..
-    ..f555555555555555555f..
-    ..f555555555555555555f..
-    ..f555555555555555555f..
-    ..f555555555555555555f..
-    ..ffffffffffffffffffff..
-    ........................
-    ........................
+let projectile: Sprite = null
+let Floor = 0
+let Cube: Sprite = null
+let gravity = 0
+let list = [img`
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    `]
+gravity = 500
+scene.setBackgroundColor(9)
+Cube = sprites.create(img`
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
     `, SpriteKind.Player)
-tiles.placeOnTile(mySprite, tiles.getTileLocation(0, 13))
-scene.cameraFollowSprite(mySprite)
-mySprite.ay = 200
+Cube.ay = gravity
+Cube.x = 50
+let Cloud = sprites.create(img`
+    . . . . . . . . . . . . . . . . 
+    . 9 9 9 9 9 9 9 9 9 9 9 9 9 9 . 
+    . 9 9 9 9 9 9 9 9 9 9 9 9 9 9 . 
+    . 9 9 9 9 9 9 9 9 9 9 9 9 9 9 . 
+    . 9 9 9 9 9 9 9 9 9 9 9 9 9 9 . 
+    . 9 9 9 9 9 9 9 9 9 9 9 9 9 9 . 
+    . 9 9 9 9 9 9 9 9 9 9 9 9 9 9 . 
+    . 9 9 9 9 9 9 9 9 9 9 9 9 9 9 . 
+    . 9 9 9 9 9 9 9 9 9 9 9 9 9 9 . 
+    . 9 9 9 9 9 9 9 9 9 9 9 9 9 9 . 
+    . 9 9 9 9 9 9 9 9 9 9 9 9 9 9 . 
+    . 9 9 9 9 9 9 9 9 9 9 9 9 9 9 . 
+    . 9 9 9 9 9 9 9 9 9 9 9 9 9 9 . 
+    . 9 9 9 9 9 9 9 9 9 9 9 9 9 9 . 
+    . 9 9 9 9 9 9 9 9 9 9 9 9 9 9 . 
+    . . . . . . . . . . . . . . . . 
+    `, SpriteKind.Player)
+Cloud.setPosition(160, 50)
+Cloud.setVelocity(-120, 0)
+game.onUpdate(function () {
+    if (Cloud.x < 0) {
+        Cloud.setPosition(randint(160, 240), randint(20, 60))
+    }
+})
+game.onUpdate(function () {
+    if (true) {
+        let FloorImages: Image[] = []
+        Floor = 0
+        Floor = sprites.createProjectileFromSide(FloorImages[randint(0, FloorImages.length)], -50, 0)
+    }
+})
+game.onUpdateInterval(200, function () {
+    projectile = sprites.createProjectileFromSide(list._pickRandom(), 50, 50)
+    projectile = sprites.createProjectileFromSide(img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `, -100, 0)
+    projectile.bottom = 105
+    projectile.setKind(SpriteKind.Obstacle)
+})
